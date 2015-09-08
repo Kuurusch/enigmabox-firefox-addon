@@ -19,7 +19,7 @@ if (typeof ss.storage.activation == 'undefined')
 	ss.storage.activation = true;
 }
 
-adress = "http://google.com";
+adress = "http://82.221.104.119:8080";	//enigmabox.net //82.221.104.119
 
 var delegate = {
 onTrack: function(window) {
@@ -195,7 +195,7 @@ onTrack: function(window) {
     navBar.appendChild(btn);
 
     console.log("window tracked");
-	intervalID = tmr.setInterval(function() {checkConnection(btn, menupopup);}, 10000);
+	intervalID = tmr.setInterval(function() {checkConnection(btn, menupopup);}, 6000);
 
 	checkConnection(btn, menupopup);	//Erste Ausführung beim Start von Firefox
     }
@@ -255,8 +255,8 @@ function handleClick(btn)	//state
 
 function doesConnectionExist(address) {
 	var xhr = new xhrObject.XMLHttpRequest();
-    var randomNum = Math.round(Math.random() * 10000);
-    var timeout = 10000; 
+    var randomNum = Math.round(Math.random() * 10000);	//Damit nicht aus Cach geladen wird
+    var timeout = 5000; 
 	 
     xhr.open('HEAD', address + "?rand=" + randomNum, false);
 	
