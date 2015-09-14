@@ -8,18 +8,78 @@ var xhrObject = require('sdk/net/xhr');
 var winUtils = require("sdk/deprecated/window-utils"); // for new style sdk
 var _ = require("sdk/l10n").get;	//Für multilingual Funktionalität
 
-if (typeof ss.storage.automaticUse == 'undefined')
+if(typeof ss.storage.automaticUse == 'undefined')
 {
 	ss.storage.automaticUse = true;
 }
 
 
-if (typeof ss.storage.activation == 'undefined')
+if(typeof ss.storage.activation == 'undefined')
 {
 	ss.storage.activation = true;
 }
 
-adress = "http://8.8.8.8:8080";//"http://82.221.104.119:8080";	//enigmabox.net //82.221.104.119
+//Für die Wiederherstellung der Firefoxeinstellung nach einer Deinstallation des Addon:
+if(typeof ss.storage.http == 'undefined')
+{
+	ss.storage.http = prefsvc.get("network.proxy.http");
+}
+
+if(typeof ss.storage.http_port == 'undefined')
+{
+	ss.storage.http_port = prefsvc.get("network.proxy.http_port");
+}
+
+if(typeof ss.storage.ssl == 'undefined')
+{
+	ss.storage.ssl = prefsvc.get("network.proxy.ssl");
+}
+
+if(typeof ss.storage.ssl_port == 'undefined')
+{
+	ss.storage.ssl_port = prefsvc.get("network.proxy.ssl_port");
+}
+
+if(typeof ss.storage.socks_version == 'undefined')
+{
+	ss.storage.socks_version = prefsvc.get("network.proxy.socks_version");
+}
+
+if(typeof ss.storage.no_proxies_on == 'undefined')
+{
+	ss.storage.no_proxies_on = prefsvc.get("network.proxy.no_proxies_on");
+}
+
+if(typeof ss.storage.type == 'undefined')
+{
+	ss.storage.type = prefsvc.get("network.proxy.type");
+}
+
+adress = "http://173.194.112.159";	//google-server//"http://82.221.104.119:8080";	//enigmabox.net //82.221.104.119
+
+//Deinstallationsfunktion:
+exports.onUnload = function (reason) 
+{
+	if(reason == "uninstall" || reason == "disable")
+	{	
+		prefsvc.set("network.proxy.http", ss.storage.http);
+		prefsvc.set("network.proxy.http_port", ss.storage.http_port);
+		prefsvc.set("network.proxy.ssl", ss.storage.ssl);
+		prefsvc.set("network.proxy.ssl_port", ss.storage.ssl_port);
+		prefsvc.set("network.proxy.socks_version", ss.storage.socks_version);
+		prefsvc.set("network.proxy.no_proxies_on", ss.storage.no_proxies_on);
+		prefsvc.set("network.proxy.type", ss.storage.type);	//Manuelle Proxy-Einstellungen
+		
+		//Die Variablen mit den Werten vor der Installation löschen, damit sie bei einer neuen Installation neu initialisiert werden:
+		delete ss.storage.http;
+		delete ss.storage.http_port;
+		delete ss.storage.ssl;
+		delete ss.storage.ssl_port;
+		delete ss.storage.socks_version;
+		delete ss.storage.no_proxies_on;
+		delete ss.storage.type;
+	}
+};
 
 var delegate = {
 onTrack: function(window) {
@@ -195,12 +255,12 @@ onTrack: function(window) {
 		navBar.appendChild(btn);
 	
 		console.log("window tracked");
-		//intervalID = tmr.setInterval(function() {checkConnection(btn, menupopup);}, 6000);
+		intervalID = tmr.setInterval(function() {checkConnection(btn, menupopup);}, 6000);
 	
-		//checkConnection(btn, menupopup);	//Erste Ausführung beim Start von Firefox
+		checkConnection(btn, menupopup);	//Erste Ausführung beim Start von Firefox
 		
 		//Bei erster Ausführung testen, ob Internetverbindung:
-		if(ss.storage.activation == true)
+		/*if(ss.storage.activation == true)
 		{
 			if(window.navigator.onLine)
 			{
@@ -265,7 +325,7 @@ onTrack: function(window) {
 			}
 			
 			menuitem9.setAttribute('image', self.data.url("./ok-icon.png"));
-		});
+		});*/
     }
 };
 
@@ -332,7 +392,7 @@ function handleClick(btn)	//state
 function AdBlockerActivated()
 {
 	//Code hear...
-	return false;
+	return true;
 }
 
 function doesConnectionExist(address) {
@@ -364,17 +424,17 @@ function checkConnection(btn, menupopup)
 		if(doesConnectionExist(adress))
 		{
 			//button.state(button, activatedState);
-			btn.setAttribute("tooltiptext", _("activated"));
-    		btn.setAttribute('image', self.data.url("./icon_activated.ico"));
+			//btn.setAttribute("tooltiptext", _("activated"));
+    		//btn.setAttribute('image', self.data.url("./icon_activated.ico"));
 			activation(btn);
 		}
 		
 		else
 		{
 			//button.state(button, problemState);
-			btn.setAttribute("tooltiptext", _("activated"));
-    		btn.setAttribute('image', self.data.url("./icon_problem.ico"));
-			deactivation(btn);
+			//btn.setAttribute("tooltiptext", _("activated"));
+    		//btn.setAttribute('image', self.data.url("./icon_problem.ico"));
+			standby(btn);
 		}
 	}
 	
