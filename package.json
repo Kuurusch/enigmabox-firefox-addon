@@ -1,7 +1,7 @@
 {
   "title": "Enigmabox Addon",
   "name": "enigmabox-addon",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "Activate web filtering with a single click.",
   "main": "index.js",
   "author": "Armin Schmidt",

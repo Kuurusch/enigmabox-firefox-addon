@@ -19,185 +19,253 @@ if (typeof ss.storage.activation == 'undefined')
 	ss.storage.activation = true;
 }
 
-adress = "http://82.221.104.119:8080";	//enigmabox.net //82.221.104.119
+adress = "http://8.8.8.8:8080";//"http://82.221.104.119:8080";	//enigmabox.net //82.221.104.119
 
 var delegate = {
 onTrack: function(window) {
 
-    if(window.location != "chrome://browser/content/browser.xul") {
-        // console.log("=> win location false");
-        return;
-    }
-
-    var document = window.document;
-    var navBar = document.getElementById('addon-bar');
-
-    btn = document.createElement('toolbarbutton');
-    btn.setAttribute('id', 'WebfilterControl');
-	btn.setAttribute("tooltiptext", _("activated"));
-    btn.setAttribute('type', 'menu-button');
-    btn.setAttribute('class', 'toolbarbutton-1');
-    btn.setAttribute('image', self.data.url("./icon_activated.ico"));	//http://www.facebook.com/favicon.ico
-
-    btn.addEventListener('command', function(event) {
-            console.log("this=" + this.id);
-			console.log(event.target.id);
-			if(event.target.id == 'WebfilterControl')
-			{
-            	handleClick(btn);
+		if(window.location != "chrome://browser/content/browser.xul") {
+			// console.log("=> win location false");
+			return;
+		}
+	
+		var document = window.document;
+		var navBar = document.getElementById('addon-bar');
+	
+		btn = document.createElement('toolbarbutton');
+		btn.setAttribute('id', 'WebfilterControl');
+		btn.setAttribute("tooltiptext", _("activated"));
+		btn.setAttribute('type', 'menu-button');
+		btn.setAttribute('class', 'toolbarbutton-1');
+		btn.setAttribute('image', self.data.url("./icon_activated.ico"));	//http://www.facebook.com/favicon.ico
+	
+		btn.addEventListener('command', function(event) {
+				console.log("this=" + this.id);
+				console.log(event.target.id);
+				if(event.target.id == 'WebfilterControl')
+				{
+					handleClick(btn);
+				}
 			}
-        }
-        , false);
-
-    var menupopup = document.createElement('menupopup');
-    menupopup.setAttribute('id', 'menupopup');
-    menupopup.addEventListener('command', function(event) {
-            // TODO your callback
-        }
-        , false);
-
-    //menu items
-    var menuitem1 = document.createElement('menuitem');
-    menuitem1.setAttribute('id', 'menuitem1');
-    menuitem1.setAttribute('label', _("admin-interface"));
-	menuitem1.setAttribute('image', self.data.url("./settings.png"));
-    menuitem1.setAttribute('class', 'menuitem-iconic');
-	menuitem1.setAttribute('validate', 'always');
-	//menuitem1.dir = "reverse";
-    menuitem1.addEventListener('command', function(event) {
-            tabs.open("http://box", "tab");
-        }
-        , false);
+			, false);
 	
-	var menuitem10 = document.createElement('menuitem');
-    menuitem10.setAttribute('id', 'menuitem10');
-    menuitem10.setAttribute('label', _("enigmaMail") + "  " + checkMail());
-	menuitem10.setAttribute('image', self.data.url("./webmail.png"));
-    menuitem10.setAttribute('class', 'menuitem-iconic');
-	menuitem10.setAttribute('validate', 'always');
-	//menuitem10.dir = "reverse";
-    menuitem10.addEventListener('command', function(event) {
-            tabs.open("http://mail.box", "tab");
-        }
-        , false);
+		var menupopup = document.createElement('menupopup');
+		menupopup.setAttribute('id', 'menupopup');
+		menupopup.addEventListener('command', function(event) {
+				// TODO your callback
+			}
+			, false);
+	
+		//menu items
+		var menuitem1 = document.createElement('menuitem');
+		menuitem1.setAttribute('id', 'menuitem1');
+		menuitem1.setAttribute('label', _("admin-interface"));
+		menuitem1.setAttribute('image', self.data.url("./settings.png"));
+		menuitem1.setAttribute('class', 'menuitem-iconic');
+		menuitem1.setAttribute('validate', 'always');
+		//menuitem1.dir = "reverse";
+		menuitem1.addEventListener('command', function(event) {
+				tabs.open("http://box", "tab");
+			}
+			, false);
 		
-	var menuitem11 = document.createElement('menuitem');
-    menuitem11.setAttribute('id', 'menuitem11');
-    menuitem11.setAttribute('label', _("help"));
-	menuitem11.setAttribute('image', self.data.url("./question.png"));
-    menuitem11.setAttribute('class', 'menuitem-iconic');
-	menuitem11.setAttribute('validate', 'always');
-	//menuitem10.dir = "reverse";
-    menuitem11.addEventListener('command', function(event) {
-            tabs.open("https://wiki.enigmabox.net/howto/adblocker", "tab");
-        }
-        , false);
-	
-	var menuseparator1 = document.createElement('menuseparator');
-	menuseparator1.setAttribute('id', 'menuseparator1');
-	menuseparator1.setAttribute('height', '20px');
-	
-	var menuitem8 = document.createElement('menuitem');
-    menuitem8.setAttribute('id', 'menuitem8');
-	menuitem8.setAttribute('disabled', true);
-    menuitem8.setAttribute('label', _("computerConnection"));
-    menuitem8.setAttribute('class', 'menuitem-iconic');
-	menuitem8.dir = "reverse";
-	
-	var menuseparator4 = document.createElement('menuseparator');
-	menuseparator4.setAttribute('id', 'menuseparator4');
-	
-	var menuitem2 = document.createElement('menuitem');
-    menuitem2.setAttribute('id', 'menuitem2');
-	menuitem2.setAttribute('disabled', true);
-    menuitem2.setAttribute('label', _("enigmaBoxConnection"));
-	menuitem2.setAttribute('image', self.data.url("./error-icon.png"));
-    menuitem2.setAttribute('class', 'menuitem-iconic');
-	menuitem2.setAttribute('validate', 'always');
-	menuitem2.dir = "reverse";
-	
-	var menuitem9 = document.createElement('menuitem');
-    menuitem9.setAttribute('id', 'menuitem9');
-	menuitem9.setAttribute('disabled', true);
-    menuitem9.setAttribute('label', _("internetConnection"));
-	menuitem9.setAttribute('image', self.data.url("./error-icon.png"));
-    menuitem9.setAttribute('class', 'menuitem-iconic');
-	menuitem9.setAttribute('validate', 'always');
-	menuitem9.dir = "reverse";
-	
-	var menuseparator2 = document.createElement('menuseparator');
-	menuseparator2.setAttribute('id', 'menuseparator2');
-	menuseparator2.setAttribute('height', '20px');
+		var menuitem10 = document.createElement('menuitem');
+		menuitem10.setAttribute('id', 'menuitem10');
+		menuitem10.setAttribute('label', _("enigmaMail") + "  " + checkMail());
+		menuitem10.setAttribute('image', self.data.url("./webmail.png"));
+		menuitem10.setAttribute('class', 'menuitem-iconic');
+		menuitem10.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		menuitem10.addEventListener('command', function(event) {
+				tabs.open("http://mail.box", "tab");
+			}
+			, false);
+			
+		var menuitem11 = document.createElement('menuitem');
+		menuitem11.setAttribute('id', 'menuitem11');
+		menuitem11.setAttribute('label', _("help"));
+		menuitem11.setAttribute('image', self.data.url("./question.png"));
+		menuitem11.setAttribute('class', 'menuitem-iconic');
+		menuitem11.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		menuitem11.addEventListener('command', function(event) {
+				tabs.open("https://wiki.enigmabox.net/howto/adblocker", "tab");
+			}
+			, false);
 		
-	var menuitem7 = document.createElement('menuitem');
-    menuitem7.setAttribute('id', 'menuitem7');
-	menuitem7.setAttribute('disabled', true);
-    menuitem7.setAttribute('label', _("enigmaBoxStatus"));
-    menuitem7.setAttribute('class', 'menuitem-iconic');
-	menuitem7.setAttribute('validate', 'always');
-	menuitem7.dir = "reverse";
+		var menuseparator1 = document.createElement('menuseparator');
+		menuseparator1.setAttribute('id', 'menuseparator1');
+		menuseparator1.setAttribute('height', '20px');
+		
+		var menuitem8 = document.createElement('menuitem');
+		menuitem8.setAttribute('id', 'menuitem8');
+		menuitem8.setAttribute('disabled', true);
+		menuitem8.setAttribute('label', _("computerConnection"));
+		menuitem8.setAttribute('class', 'menuitem-iconic');
+		menuitem8.dir = "reverse";
+		
+		var menuseparator4 = document.createElement('menuseparator');
+		menuseparator4.setAttribute('id', 'menuseparator4');
+		
+		var menuitem2 = document.createElement('menuitem');
+		menuitem2.setAttribute('id', 'menuitem2');
+		menuitem2.setAttribute('disabled', true);
+		menuitem2.setAttribute('label', _("enigmaBoxConnection"));
+		menuitem2.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem2.setAttribute('class', 'menuitem-iconic');
+		menuitem2.setAttribute('validate', 'always');
+		menuitem2.dir = "reverse";
+		
+		var menuitem9 = document.createElement('menuitem');
+		menuitem9.setAttribute('id', 'menuitem9');
+		menuitem9.setAttribute('disabled', true);
+		menuitem9.setAttribute('label', _("internetConnection"));
+		menuitem9.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem9.setAttribute('class', 'menuitem-iconic');
+		menuitem9.setAttribute('validate', 'always');
+		menuitem9.dir = "reverse";
+		
+		var menuseparator2 = document.createElement('menuseparator');
+		menuseparator2.setAttribute('id', 'menuseparator2');
+		menuseparator2.setAttribute('height', '20px');
+			
+		var menuitem7 = document.createElement('menuitem');
+		menuitem7.setAttribute('id', 'menuitem7');
+		menuitem7.setAttribute('disabled', true);
+		menuitem7.setAttribute('label', _("enigmaBoxStatus"));
+		menuitem7.setAttribute('class', 'menuitem-iconic');
+		menuitem7.setAttribute('validate', 'always');
+		menuitem7.dir = "reverse";
+		
+		var menuseparator3 = document.createElement('menuseparator');
+		menuseparator3.setAttribute('id', 'menuseparator3');
+		
+		var menuitem3 = document.createElement('menuitem');
+		menuitem3.setAttribute('id', 'menuitem3');
+		menuitem3.setAttribute('disabled', true);
+		menuitem3.setAttribute('label', _("routerIP"));
+		menuitem3.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem3.setAttribute('class', 'menuitem-iconic');
+		menuitem3.setAttribute('validate', 'always');
+		menuitem3.dir = "reverse";
+		
+		var menuitem4 = document.createElement('menuitem');
+		menuitem4.setAttribute('id', 'menuitem4');
+		menuitem4.setAttribute('disabled', true);
+		menuitem4.setAttribute('label', _("regularInternet"));
+		menuitem4.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem4.setAttribute('class', 'menuitem-iconic');
+		menuitem4.setAttribute('validate', 'always');
+		menuitem4.dir = "reverse";
+		
+		var menuitem5 = document.createElement('menuitem');
+		menuitem5.setAttribute('id', 'menuitem5');
+		menuitem5.setAttribute('disabled', true);
+		menuitem5.setAttribute('label', _("cjdnsConnection"));
+		menuitem5.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem5.setAttribute('class', 'menuitem-iconic');
+		menuitem5.setAttribute('validate', 'always');
+		menuitem5.dir = "reverse";
+		
+		var menuitem6 = document.createElement('menuitem');
+		menuitem6.setAttribute('id', 'menuitem6');
+		menuitem6.setAttribute('disabled', true);
+		menuitem6.setAttribute('label', _("encryptedInternet"));
+		menuitem6.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem6.setAttribute('class', 'menuitem-iconic');
+		menuitem6.setAttribute('validate', 'always');
+		menuitem6.dir = "reverse";
 	
-	var menuseparator3 = document.createElement('menuseparator');
-	menuseparator3.setAttribute('id', 'menuseparator3');
+		menupopup.appendChild(menuitem1);
+		menupopup.appendChild(menuitem10);
+		menupopup.appendChild(menuitem11);
+		menupopup.appendChild(menuseparator1);
+		menupopup.appendChild(menuitem8);
+		menupopup.appendChild(menuseparator4);
+		menupopup.appendChild(menuitem2);
+		menupopup.appendChild(menuitem9);
+		menupopup.appendChild(menuseparator2);
+		menupopup.appendChild(menuitem7);
+		menupopup.appendChild(menuseparator3);
+		menupopup.appendChild(menuitem3);
+		menupopup.appendChild(menuitem4);
+		menupopup.appendChild(menuitem5);
+		menupopup.appendChild(menuitem6);
+		btn.appendChild(menupopup);
+		navBar.appendChild(btn);
 	
-	var menuitem3 = document.createElement('menuitem');
-    menuitem3.setAttribute('id', 'menuitem3');
-	menuitem3.setAttribute('disabled', true);
-    menuitem3.setAttribute('label', _("routerIP"));
-	menuitem3.setAttribute('image', self.data.url("./error-icon.png"));
-    menuitem3.setAttribute('class', 'menuitem-iconic');
-	menuitem3.setAttribute('validate', 'always');
-	menuitem3.dir = "reverse";
+		console.log("window tracked");
+		//intervalID = tmr.setInterval(function() {checkConnection(btn, menupopup);}, 6000);
 	
-	var menuitem4 = document.createElement('menuitem');
-    menuitem4.setAttribute('id', 'menuitem4');
-	menuitem4.setAttribute('disabled', true);
-    menuitem4.setAttribute('label', _("regularInternet"));
-	menuitem4.setAttribute('image', self.data.url("./error-icon.png"));
-    menuitem4.setAttribute('class', 'menuitem-iconic');
-	menuitem4.setAttribute('validate', 'always');
-	menuitem4.dir = "reverse";
+		//checkConnection(btn, menupopup);	//Erste Ausführung beim Start von Firefox
+		
+		//Bei erster Ausführung testen, ob Internetverbindung:
+		if(ss.storage.activation == true)
+		{
+			if(window.navigator.onLine)
+			{
+				if(AdBlockerActivated())
+				{
+					activation(btn);
+				}
+				
+				else
+				{
+					standby(btn);
+				}
+				
+				menuitem9.setAttribute('image', self.data.url("./ok-icon.png"));
+			}
+			
+			else
+			{
+				menuitem9.setAttribute('image', self.data.url("./error-icon.png"));
+			}
+		}
+		
+		else
+		{
+			deactivation(btn);
+		}
+		
 	
-	var menuitem5 = document.createElement('menuitem');
-    menuitem5.setAttribute('id', 'menuitem5');
-	menuitem5.setAttribute('disabled', true);
-    menuitem5.setAttribute('label', _("cjdnsConnection"));
-	menuitem5.setAttribute('image', self.data.url("./error-icon.png"));
-    menuitem5.setAttribute('class', 'menuitem-iconic');
-	menuitem5.setAttribute('validate', 'always');
-	menuitem5.dir = "reverse";
-	
-	var menuitem6 = document.createElement('menuitem');
-    menuitem6.setAttribute('id', 'menuitem6');
-	menuitem6.setAttribute('disabled', true);
-    menuitem6.setAttribute('label', _("encryptedInternet"));
-	menuitem6.setAttribute('image', self.data.url("./error-icon.png"));
-    menuitem6.setAttribute('class', 'menuitem-iconic');
-	menuitem6.setAttribute('validate', 'always');
-	menuitem6.dir = "reverse";
-
-    menupopup.appendChild(menuitem1);
-	menupopup.appendChild(menuitem10);
-	menupopup.appendChild(menuitem11);
-	menupopup.appendChild(menuseparator1);
-	menupopup.appendChild(menuitem8);
-	menupopup.appendChild(menuseparator4);
-	menupopup.appendChild(menuitem2);
-	menupopup.appendChild(menuitem9);
-	menupopup.appendChild(menuseparator2);
-	menupopup.appendChild(menuitem7);
-	menupopup.appendChild(menuseparator3);
-	menupopup.appendChild(menuitem3);
-	menupopup.appendChild(menuitem4);
-	menupopup.appendChild(menuitem5);
-	menupopup.appendChild(menuitem6);
-    btn.appendChild(menupopup);
-    navBar.appendChild(btn);
-
-    console.log("window tracked");
-	intervalID = tmr.setInterval(function() {checkConnection(btn, menupopup);}, 6000);
-
-	checkConnection(btn, menupopup);	//Erste Ausführung beim Start von Firefox
+		window.addEventListener("offline", function(e) 
+		{
+			if(ss.storage.activation == true)
+			{
+				standby(btn);
+			}
+			
+			else
+			{
+				deactivation(btn);
+			}
+			
+			menuitem9.setAttribute('image', self.data.url("./error-icon.png"));
+		});
+		
+		window.addEventListener("online", function(e) 
+		{ 
+			if(ss.storage.activation == true)
+			{
+				if(AdBlockerActivated())
+				{
+					activation(btn);
+				}
+				
+				else
+				{
+					standby(btn);
+				}
+			}
+			
+			else
+			{
+				deactivation(btn);
+			}
+			
+			menuitem9.setAttribute('image', self.data.url("./ok-icon.png"));
+		});
     }
 };
 
@@ -207,7 +275,6 @@ winUtils.WindowTracker(delegate);
   contentURL: self.data.url("panel.html"),
   onHide: handleHide
 });*/
-
 
 
 function deactivation(btn)
@@ -234,6 +301,15 @@ function activation(btn)
 	prefsvc.set("network.proxy.type", 1);	//Manuelle Proxy-Einstellungen
 }
 
+function standby(btn)
+{
+	//button.state(button, activatedState);
+	btn.setAttribute("tooltiptext", _("standby"));
+    btn.setAttribute('image', self.data.url("./icon_problem.ico"));
+	ss.storage.activation = true;
+	prefsvc.set("network.proxy.type", 5);	//Proxy des Systems verwenden
+}
+
 function handleClick(btn)	//state
 {	
   	if(ss.storage.activation == true)
@@ -251,6 +327,12 @@ function handleClick(btn)	//state
 	  		activation(btn);
 	  	}
   	}
+}
+
+function AdBlockerActivated()
+{
+	//Code hear...
+	return false;
 }
 
 function doesConnectionExist(address) {
