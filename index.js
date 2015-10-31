@@ -7,6 +7,7 @@ var tmr = require('sdk/timers');
 var xhrObject = require('sdk/net/xhr');
 var winUtils = require("sdk/deprecated/window-utils"); // for new style sdk
 var _ = require("sdk/l10n").get;	//Für multilingual Funktionalität
+var notifications = require("sdk/notifications");
 
 if(typeof ss.storage.automaticUse == 'undefined')
 {
@@ -56,6 +57,76 @@ if(typeof ss.storage.type == 'undefined')
 }
 
 adress = "http://173.194.112.159";	//google-server//"http://82.221.104.119:8080";	//enigmabox.net //82.221.104.119
+
+var language = new Array();
+language['ch'] = _("ch");
+language['de'] = _("de");
+language['se'] = _("se");
+language['hu'] = _("hu");
+language['us'] = _("us");
+
+
+//Statusvariablen initialisieren:
+ip_from_Router = 0;
+regular_Internet = 0;
+network_service = 0;
+cjdns_network = 0;
+webfilter_status = 0;
+expiration_date = 0;
+current_country = "";
+teletext_status = 0;
+personal_website_status = 0;
+dokuwiki_status = 0;
+owncloud_status = 0;
+pastebin_status = 0;
+ipv6_adress = "";
+
+handler = function(event){
+        tabs.open("http://box/subscription/", "tab");
+    };
+handler1_old = function(event){
+        tabs.open("http://[]", "tab");
+    };
+handler2_old = function(event){
+        tabs.open("http://[]/owncloud", "tab");
+    };
+handler3_old = function(event){
+        tabs.open("http://[]/wiki", "tab");
+    };
+handler4_old = function(event){
+        tabs.open("http://[]/pastebin", "tab");
+    };
+
+var randomNum = Math.round(Math.random() * 10000);	//Damit nicht aus Cach geladen wird
+var timeout = 1000; 
+var xhr = new xhrObject.XMLHttpRequest();
+xhr.open('GET', 'http://box/api/v1/get_firefoxAddon_info?rand=' + randomNum, false);
+
+tmr.setTimeout(function () {xhr.abort()}, timeout);
+
+try {
+	xhr.send();
+	var str = xhr.responseText;
+	var boxStatus = str.split("\n");
+	expiration_date = boxStatus[4];
+	var date = new Date();
+	var expiration_date_object = new Date(expiration_date);
+	var expiration_date_unix = expiration_date_object.getTime();
+	
+	if((expiration_date_unix - date)/(1000*60*60*24*30) < 3 && (expiration_date_unix - date)/(1000*60*60*24*30) >= 0)
+	{
+		showNotification(_("subNotificationTitle"), _("subNotificationWarning"));
+	}
+	
+	else if((expiration_date_unix - date)/(1000*60*60*24*30) < 0)
+	{
+		showNotification(_("subNotificationTitle"), _("subNotification"));
+	}
+} 
+
+catch (e) 
+{
+}
 
 //Deinstallationsfunktion:
 exports.onUnload = function (reason) 
@@ -141,6 +212,66 @@ onTrack: function(window) {
 			}
 			, false);
 			
+		var menuitem17 = document.createElement('menuitem');
+		menuitem17.setAttribute('id', 'menuitem17');
+		menuitem17.setAttribute('label', _("teletext"));
+		menuitem17.setAttribute('image', self.data.url("./TXT.png"));
+		menuitem17.setAttribute('class', 'menuitem-iconic');
+		menuitem17.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		menuitem17.addEventListener('command', function(event) {
+				tabs.open("http://text.box", "tab");
+			}
+			, false);
+			
+		var menuitem13 = document.createElement('menuitem');
+		menuitem13.setAttribute('id', 'menuitem13');
+		menuitem13.setAttribute('label', _("ownWebsite"));
+		menuitem13.setAttribute('image', self.data.url("./home.png"));
+		menuitem13.setAttribute('class', 'menuitem-iconic');
+		menuitem13.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		/*menuitem13.addEventListener('command', function(event) {
+				tabs.open("http://[]", "tab");
+			}
+			, false);*/
+			
+		var menuitem14 = document.createElement('menuitem');
+		menuitem14.setAttribute('id', 'menuitem14');
+		menuitem14.setAttribute('label', _("ownCloud"));
+		menuitem14.setAttribute('image', self.data.url("./OwnCloud.png"));
+		menuitem14.setAttribute('class', 'menuitem-iconic');
+		menuitem14.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		/*menuitem14.addEventListener('command', function(event) {
+				tabs.open("http://[]/owncloud", "tab");
+			}
+			, false);*/
+			
+		var menuitem15 = document.createElement('menuitem');
+		menuitem15.setAttribute('id', 'menuitem15');
+		menuitem15.setAttribute('label', _("wiki"));
+		menuitem15.setAttribute('image', self.data.url("./book.png"));
+		menuitem15.setAttribute('class', 'menuitem-iconic');
+		menuitem15.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		/*menuitem15.addEventListener('command', function(event) {
+				tabs.open("http://[]/wiki", "tab");
+			}
+			, false);*/
+			
+		var menuitem16 = document.createElement('menuitem');
+		menuitem16.setAttribute('id', 'menuitem16');
+		menuitem16.setAttribute('label', _("pastebin"));
+		menuitem16.setAttribute('image', self.data.url("./pastebin.png"));
+		menuitem16.setAttribute('class', 'menuitem-iconic');
+		menuitem16.setAttribute('validate', 'always');
+		//menuitem10.dir = "reverse";
+		/*menuitem16.addEventListener('command', function(event) {
+				tabs.open("http://[]/pastebin", "tab");
+			}
+			, false);*/
+			
 		var menuitem11 = document.createElement('menuitem');
 		menuitem11.setAttribute('id', 'menuitem11');
 		menuitem11.setAttribute('label', _("help"));
@@ -149,7 +280,7 @@ onTrack: function(window) {
 		menuitem11.setAttribute('validate', 'always');
 		//menuitem10.dir = "reverse";
 		menuitem11.addEventListener('command', function(event) {
-				tabs.open("https://wiki.enigmabox.net/howto/adblocker", "tab");
+				tabs.open("https://docs.enigmabox.net/de/internet.html#werbeblocker-konfigurieren", "tab");
 			}
 			, false);
 		
@@ -235,9 +366,31 @@ onTrack: function(window) {
 		menuitem6.setAttribute('class', 'menuitem-iconic');
 		menuitem6.setAttribute('validate', 'always');
 		menuitem6.dir = "reverse";
+		
+		var menuitem18 = document.createElement('menuitem');
+		menuitem18.setAttribute('id', 'menuitem18');
+		menuitem18.setAttribute('disabled', true);
+		menuitem18.setAttribute('label', _("country") + ": ");
+		menuitem18.setAttribute('class', 'menuitem-iconic');
+		menuitem18.setAttribute('validate', 'always');
+		menuitem18.dir = "reverse";
+		
+		var menuitem12 = document.createElement('menuitem');
+		menuitem12.setAttribute('id', 'menuitem12');
+		menuitem12.setAttribute('disabled', true);
+		menuitem12.setAttribute('label', _("sub") + ": " + _("valid"));
+		menuitem12.setAttribute('image', self.data.url("./error-icon.png"));
+		menuitem12.setAttribute('class', 'menuitem-iconic');
+		menuitem12.setAttribute('validate', 'always');
+		menuitem12.dir = "reverse";
 	
 		menupopup.appendChild(menuitem1);
 		menupopup.appendChild(menuitem10);
+		menupopup.appendChild(menuitem17);
+		menupopup.appendChild(menuitem13);
+		menupopup.appendChild(menuitem14);
+		menupopup.appendChild(menuitem15);
+		menupopup.appendChild(menuitem16);
 		menupopup.appendChild(menuitem11);
 		menupopup.appendChild(menuseparator1);
 		menupopup.appendChild(menuitem8);
@@ -251,6 +404,9 @@ onTrack: function(window) {
 		menupopup.appendChild(menuitem4);
 		menupopup.appendChild(menuitem5);
 		menupopup.appendChild(menuitem6);
+		menupopup.appendChild(menuitem18);
+		menupopup.appendChild(menuitem12);
+		
 		btn.appendChild(menupopup);
 		navBar.appendChild(btn);
 	
@@ -382,17 +538,65 @@ function handleClick(btn)	//state
 	  	btn.setAttribute("tooltiptext", _("activated"));
  		btn.setAttribute('image', self.data.url("./icon_problem.ico"));
 	  
-	  	if(doesConnectionExist(adress))
+	  	if(doesConnectionExist(adress) == 1)
 	  	{
 	  		activation(btn);
 	  	}
   	}
 }
 
-function AdBlockerActivated()
+function set_Node_state(node, state)
 {
-	//Code hear...
-	return true;
+	if(state == 2)
+	{
+		node.setAttribute('image', self.data.url("./warning-icon.png"));
+	}
+	
+	else if(state == 1)
+	{
+		node.setAttribute('image', self.data.url("./ok-icon.png"));
+	}
+	
+	else
+	{
+		node.setAttribute('image', self.data.url("./error-icon.png"));
+	}
+}
+
+function set_Node_access(node, state)
+{
+	if(state == 1)
+	{
+		node.setAttribute('disabled', false);
+	}
+	
+	else
+	{
+		node.setAttribute('disabled', true);
+	}
+}
+
+function replaceEventListener(node, handler, handler_old)
+{
+	node.removeEventListener('command', handler_old, false);
+	node.addEventListener('command', handler, false);
+}
+
+function addTabsEvent(adress)
+{
+	tabs.open(adress, "tab");
+}
+
+function showNotification(notificationTitle, notificationText)
+{
+	notifications.notify({
+  		title: notificationTitle,
+  		text: notificationText,
+		iconURL: "./icon_activated-64.png",
+  		onClick: function (data) {
+    		tabs.open("http://box", "tab");
+  		}
+	});
 }
 
 function doesConnectionExist(address) {
@@ -408,32 +612,68 @@ function doesConnectionExist(address) {
         xhr.send(null);
          
         if (xhr.status >= 200 && xhr.status < 304) {
-            return true;
+            return 1;
         } else {
-            return false;
+            return 0;
         }
     } catch (e) {
-        return false;
+        return 0;
     }
 }
 
 function checkConnection(btn, menupopup)
 {
+	var randomNum = Math.round(Math.random() * 10000);	//Damit nicht aus Cach geladen wird
+	var timeout = 1000; 
+	var children = menupopup.childNodes;
+	
 	if(ss.storage.activation == true)
 	{
-		if(doesConnectionExist(adress))
+		var xhr = new xhrObject.XMLHttpRequest();
+		xhr.open('GET', 'http://box/api/v1/get_firefoxAddon_info?rand=' + randomNum, false);
+		
+		tmr.setTimeout(function () {xhr.abort()}, timeout);
+		
+		try {
+			xhr.send();
+			var str = xhr.responseText;
+			var boxStatus = str.split("\n");
+			ip_from_Router = boxStatus[0];
+			regular_Internet = boxStatus[1];
+			network_service = boxStatus[2];
+			cjdns_network = boxStatus[3];
+			expiration_date = boxStatus[4];
+			webfilter_status = boxStatus[5];
+			current_country = boxStatus[6];
+			teletext_status = boxStatus[7];
+			personal_website_status = boxStatus[8];
+			dokuwiki_status = boxStatus[9];
+			owncloud_status = boxStatus[10];
+			pastebin_status = boxStatus[11];
+			ipv6_adress = boxStatus[12]
+		} 
+		
+		catch (e) 
 		{
-			//button.state(button, activatedState);
-			//btn.setAttribute("tooltiptext", _("activated"));
-    		//btn.setAttribute('image', self.data.url("./icon_activated.ico"));
+			standby(btn);
+			set_Node_state(children[11], 0);
+			set_Node_state(children[12], 0);
+			set_Node_state(children[16], 0);
+			set_Node_state(children[17], 0);
+			set_Node_state(children[18], 0);
+			set_Node_state(children[19], 0);
+        	return false;
+    	}
+		
+		set_Node_state(children[11], 1);
+		
+		if(webfilter_status == 1)
+		{
 			activation(btn);
 		}
 		
 		else
 		{
-			//button.state(button, problemState);
-			//btn.setAttribute("tooltiptext", _("activated"));
-    		//btn.setAttribute('image', self.data.url("./icon_problem.ico"));
 			standby(btn);
 		}
 	}
@@ -443,17 +683,91 @@ function checkConnection(btn, menupopup)
 		deactivation(btn);
 	}
 	
-	var children = menupopup.childNodes;
+	set_Node_state(children[12], doesConnectionExist(adress));
+	set_Node_state(children[16], ip_from_Router);
+	set_Node_state(children[17], regular_Internet);
+	set_Node_state(children[18], network_service);
+	set_Node_state(children[19], cjdns_network);
 	
-	if(doesConnectionExist(adress))
+	children[20].setAttribute('label', _("country") + ": " + language[current_country]);
+	
+	var date = new Date();
+	var expiration_date_object = new Date(expiration_date);
+	var expiration_date_unix = expiration_date_object.getTime();
+	var expiration_date_string = "";
+	
+	if(prefsvc.get("general.useragent.locale") == "en")
 	{
-		children[7].setAttribute('image', self.data.url("./ok-icon.png"));
+		expiration_date_string = expiration_date_object.getFullYear() + "." + (expiration_date_object.getMonth() + 1) + "." + expiration_date_object.getDate();
 	}
 	
 	else
 	{
-		children[7].setAttribute('image', self.data.url("./error-icon.png"));
+		expiration_date_string = expiration_date_object.getDate() + "." + (expiration_date_object.getMonth() + 1) + "." + expiration_date_object.getFullYear();
 	}
+	
+	if((date - expiration_date_unix)/(1000*60*60*24*30) > 3)
+	{
+		set_Node_state(children[21], 1);
+		
+		if(children[21].getAttribute('disabled') == false)
+		{
+			children[21].removeEventListener('command', handler, false);
+			children[21].setAttribute('disabled', true);
+		}
+	}
+	
+	else if((expiration_date_unix - date)/(1000*60*60*24*30) < 3 && (expiration_date_unix - date)/(1000*60*60*24*30) >= 0)
+	{
+		set_Node_state(children[21], 2);	//Warnmodus
+		
+		if(children[21].getAttribute('disabled'))
+		{
+			children[21].addEventListener('command', handler, false);
+			children[21].setAttribute('disabled', false);
+		}
+	}
+	
+	else
+	{
+		set_Node_state(children[21], 0);
+		
+		if(children[21].getAttribute('disabled'))
+		{
+			children[21].addEventListener('command', handler, false);
+			children[21].setAttribute('disabled', false);
+		}
+	}
+	
+	children[21].setAttribute('label', _("sub") + ": " + _("valid") + " " + expiration_date_string);
+	set_Node_access(children[2], teletext_status);
+	set_Node_access(children[3], personal_website_status);
+	set_Node_access(children[4], owncloud_status);
+	set_Node_access(children[5], dokuwiki_status);
+	set_Node_access(children[6], pastebin_status);
+	
+	
+	handler1 = function(event){
+        tabs.open("http://[" + ipv6_adress + "]", "tab");
+    };
+	handler2 = function(event){
+        tabs.open("http://[" + ipv6_adress + "]/owncloud", "tab");
+    };
+	handler3 = function(event){
+        tabs.open("http://[" + ipv6_adress + "]/wiki", "tab");
+    };
+	handler4 = function(event){
+        tabs.open("http://[" + ipv6_adress + "]/pastebin", "tab");
+    };
+	
+	replaceEventListener(children[3], handler1, handler1_old);
+	replaceEventListener(children[4], handler2, handler2_old);
+	replaceEventListener(children[5], handler3, handler3_old);
+	replaceEventListener(children[6], handler4, handler4_old);
+	handler1_old = handler1;
+	handler2_old = handler2;
+	handler3_old = handler3;
+	handler4_old = handler4;
 }
 
 function checkMail()
