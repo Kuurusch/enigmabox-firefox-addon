@@ -80,6 +80,7 @@ dokuwiki_status = 0;
 owncloud_status = 0;
 pastebin_status = 0;
 ipv6_adress = "";
+ipv6_adress_old = "";
 
 handler = function(event){
         tabs.open("http://box/subscription/", "tab");
@@ -650,6 +651,7 @@ function checkConnection(btn, menupopup)
 			dokuwiki_status = boxStatus[9];
 			owncloud_status = boxStatus[10];
 			pastebin_status = boxStatus[11];
+			ipv6_adress_old = ipv6_adress;
 			ipv6_adress = boxStatus[12]
 		} 
 		
@@ -746,28 +748,30 @@ function checkConnection(btn, menupopup)
 	set_Node_access(children[5], dokuwiki_status);
 	set_Node_access(children[6], pastebin_status);
 	
-	
-	handler1 = function(event){
-        tabs.open("http://[" + ipv6_adress + "]", "tab");
-    };
-	handler2 = function(event){
-        tabs.open("http://[" + ipv6_adress + "]/owncloud", "tab");
-    };
-	handler3 = function(event){
-        tabs.open("http://[" + ipv6_adress + "]/wiki", "tab");
-    };
-	handler4 = function(event){
-        tabs.open("http://[" + ipv6_adress + "]/pastebin", "tab");
-    };
-	
-	replaceEventListener(children[3], handler1, handler1_old);
-	replaceEventListener(children[4], handler2, handler2_old);
-	replaceEventListener(children[5], handler3, handler3_old);
-	replaceEventListener(children[6], handler4, handler4_old);
-	handler1_old = handler1;
-	handler2_old = handler2;
-	handler3_old = handler3;
-	handler4_old = handler4;
+	if(ipv6_adress != ipv6_adress_old)
+	{
+		handler1 = function(event){
+			tabs.open("http://[" + ipv6_adress + "]", "tab");
+		};
+		handler2 = function(event){
+			tabs.open("http://[" + ipv6_adress + "]/owncloud", "tab");
+		};
+		handler3 = function(event){
+			tabs.open("http://[" + ipv6_adress + "]/wiki", "tab");
+		};
+		handler4 = function(event){
+			tabs.open("http://[" + ipv6_adress + "]/pastebin", "tab");
+		};
+		
+		replaceEventListener(children[3], handler1, handler1_old);
+		replaceEventListener(children[4], handler2, handler2_old);
+		replaceEventListener(children[5], handler3, handler3_old);
+		replaceEventListener(children[6], handler4, handler4_old);
+		handler1_old = handler1;
+		handler2_old = handler2;
+		handler3_old = handler3;
+		handler4_old = handler4;
+	}
 }
 
 function checkMail()
