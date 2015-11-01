@@ -640,9 +640,9 @@ function checkConnection(btn, menupopup)
 			var str = xhr.responseText;
 			var boxStatus = str.split("\n");
 			ip_from_Router = boxStatus[0];
-			regular_Internet = boxStatus[1];
+			regular_Internet = boxStatus[3];
 			network_service = boxStatus[2];
-			cjdns_network = boxStatus[3];
+			cjdns_network = boxStatus[1];
 			expiration_date = boxStatus[4];
 			webfilter_status = boxStatus[5];
 			current_country = boxStatus[6];
