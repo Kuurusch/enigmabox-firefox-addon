@@ -658,8 +658,8 @@ function checkConnection(btn, menupopup)
 		catch (e) 
 		{
 			standby(btn);
-			set_Node_state(children[11], 0);
-			set_Node_state(children[12], 0);
+			set_Node_state(children[11], 0);	//Statusanzeige Verbindung zur Enigmabox => off
+			set_Node_state(children[12], doesConnectionExist(adress));
 			set_Node_state(children[16], 0);
 			set_Node_state(children[17], 0);
 			set_Node_state(children[18], 0);
