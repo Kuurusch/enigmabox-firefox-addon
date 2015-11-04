@@ -667,16 +667,16 @@ function checkConnection(btn, menupopup)
         	return false;
     	}
 		
-		set_Node_state(children[11], 1);
-		
 		if(webfilter_status == 1)
 		{
 			activation(btn);
+			set_Node_state(children[11], 1);	//Statusanzeige Verbindung zur Enigmabox => on
 		}
 		
 		else
 		{
 			standby(btn);
+			set_Node_state(children[11], 0);	//Statusanzeige Verbindung zur Enigmabox => off
 		}
 	}
 	
