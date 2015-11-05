@@ -741,7 +741,16 @@ function checkConnection(btn, menupopup)
 		}
 	}
 	
-	children[21].setAttribute('label', _("sub") + ": " + _("valid") + " " + expiration_date_string);
+	if(!isNaN(expiration_date_unix))
+	{
+		children[21].setAttribute('label', _("sub") + ": " + _("valid") + " " + expiration_date_string);
+	}
+	
+	else
+	{
+		children[21].setAttribute('label', _("sub") + ": " + _("valid") + " " + _("unknown"));
+	}
+	
 	set_Node_access(children[2], teletext_status);
 	set_Node_access(children[3], personal_website_status);
 	set_Node_access(children[4], owncloud_status);
